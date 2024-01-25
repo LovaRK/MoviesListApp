@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>AccessToken</key>
+	<string>eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI0ZmFmZGUxOWUxMjBmZjhmNmVmOGUxMTA2ZjBlNjE0YyIsInN1YiI6IjVjNmJmM2I4YzNhMzY4NWNiZGRjOTBlZSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.VselLryELvHnWq3Mph2hbJpnTbBc8Py0UmjtOiZpt0M</string>
+	<key>APIKey</key>
+	<string>4fafde19e120ff8f6ef8e1106f0e614c</string>
+	<key>posterPath</key>
+	<string>https://image.tmdb.org/t/p/w500</string>
+</dict>
+</plist>
