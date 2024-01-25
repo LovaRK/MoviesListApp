@@ -37,7 +37,7 @@ _To be added: Instructions on setting up the project locally._
 
 ## Contributing
 
-Contributions are welcome! Please read our [Contributing Guide](LINK_TO_CONTRIBUTING_GUIDE) for details on how to contribute.
+Contributions are welcome! Please read our [Contributing Guide](https://github.com/LovaRK/MoviesListApp/blob/main/CONTRIBUTING.md) for details on how to contribute.
 
 ## License
 
