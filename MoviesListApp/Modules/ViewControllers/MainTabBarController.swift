@@ -43,7 +43,7 @@ class MainTabBarController: UITabBarController {
         let apiManager = APIManager()
         let localDataRepository = CoreDataRepository()
         
-        let moviesAPIService = MoviesAPIService(apiManager: apiManager)
+        let moviesAPIService = MoviesAPIService(apiManager: apiManager, localDataRepository: localDataRepository)
         
         // Initializing view models with specific fetch functions
         let movieHomeVM = MovieHomeViewModel(apiService: moviesAPIService, localDataRepository: localDataRepository)

@@ -88,12 +88,6 @@ class CollectionViewManager<ViewModel: CollectionViewCompatible & PaginationHand
         
     }
     
-    // Method to set the empty state view model
-    func setEmptyStateViewModel(_ viewModel: EmptyStateViewModel?) {
-        emptyStateViewModel = viewModel
-        collectionView?.reloadData() // Reload the collection view to show/hide the empty state
-    }
-    
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         if indexPath.item == viewModel.numberOfItems(inSection: 0) - 1, viewModel.getCurrentPage() < viewModel.getTotalPages(), !viewModel.getIsSearchActive() {
             self.viewModel.loadMoreData {

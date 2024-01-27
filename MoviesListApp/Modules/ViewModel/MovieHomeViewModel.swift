@@ -21,7 +21,7 @@ class MovieHomeViewModel {
     internal var totalPages = 1
     
     var isLoadingIndicatorVisible: ((Bool) -> Void)?
-  
+    
     var isSearchActive: Bool = false
     
     init(apiService: APIService, localDataRepository: LocalDataRepository) {
@@ -37,12 +37,9 @@ class MovieHomeViewModel {
             switch result {
             case .success(let fetchedGenres):
                 self.handleFetchedGenres(fetchedGenres)
-                self.saveGenresToLocal(fetchedGenres.genres ?? [])
                 completion(fetchedGenres, nil)
             case .failure(let error):
-                let localGenres = self.fetchGenresFromLocal()
-                print("Error::: \(error.localizedDescription)")
-                completion(Genres(genres: localGenres), nil)
+                completion(nil, error)
             }
         }
     }
@@ -83,23 +80,19 @@ class MovieHomeViewModel {
         loadMoreData(completion: completion)
     }
     
-    private func handleFetchMoviesResult(_ result: Result<Movies, APIError>, completion: @escaping () -> Void) {
+    private func handleFetchMoviesResult(_ result: Result<MovieFetchResult, APIError>, completion: @escaping () -> Void) {
         defer { self.isFetching = false }
         switch result {
         case .success(let fetchedMovies):
-            self.saveMoviesToLocal(fetchedMovies.movies ?? [])
-            if let newMovies = fetchedMovies.movies, !newMovies.isEmpty {
-                self.movies.append(contentsOf: newMovies)
+            if !fetchedMovies.moviesArray.isEmpty {
+                self.movies.append(contentsOf: fetchedMovies.moviesArray)
                 self.filteredMovies = self.movies
                 self.currentPage += 1
-                self.totalPages = fetchedMovies.totalPages ?? self.currentPage
+                self.totalPages = fetchedMovies.totalPages 
             } else {
                 print("Error fetching more movies empty movies")
             }
         case .failure(let error):
-            let localMovies = self.fetchMoviesFromLocal()
-            self.movies = localMovies
-            self.filteredMovies = localMovies
             print("Error fetching more movies: \(error)")
         }
         DispatchQueue.main.async {
@@ -138,7 +131,7 @@ extension MovieHomeViewModel: CollectionViewCompatible {
 
 extension MovieHomeViewModel: PaginationHandling {
     
-   
+    
     
     func loadMoreData(completion: @escaping () -> Void) {
         guard !isFetching, let genreId = selectedGenreId, currentPage <= totalPages, !isSearchActive else {
@@ -163,27 +156,3 @@ extension MovieHomeViewModel: PaginationHandling {
 }
 
 
-extension MovieHomeViewModel {
-    
-    // MARK: - Core Data Integration
-    
-    // Save movies to Core Data
-    private func saveMoviesToLocal(_ movies: [Movie]) {
-        localDataRepository.saveMovies(movies)
-    }
-
-    // Save genres to Core Data
-    private func saveGenresToLocal(_ genres: [Genre]) {
-        localDataRepository.saveGenres(genres)
-    }
-        
-    // Fetch genres from Core Data
-    private func fetchGenresFromLocal() -> [Genre] {
-        localDataRepository.fetchGenres()
-    }
-    
-    // Fetch movies from Core Data
-    private func fetchMoviesFromLocal() -> [Movie] {
-        localDataRepository.fetchMovies()
-    }
-}
