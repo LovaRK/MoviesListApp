@@ -147,7 +147,14 @@ class CollectionViewManager<ViewModel: CollectionViewCompatible & PaginationHand
     
     
     // MARK: UICollectionViewDelegateFlowLayout
+    
+    // Cached item sizes for optimization
+    private var cachedItemSizes = [IndexPath: CGSize]()
+    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        if let cachedSize = cachedItemSizes[indexPath] {
+            return cachedSize
+        }
         let orientation = UIApplication.shared.windows.first?.windowScene?.interfaceOrientation
         var columns: CGFloat = 2 // Default number of columns for portrait
         if orientation == .landscapeLeft || orientation == .landscapeRight {
@@ -160,6 +167,11 @@ class CollectionViewManager<ViewModel: CollectionViewCompatible & PaginationHand
         let itemWidth = (collectionView.bounds.width - totalHorizontalSpacing) / columns
         let itemHeight = itemWidth * 1.2 // Assuming a height proportional to the width
         return CGSize(width: itemWidth, height: itemHeight)
+    }
+    
+    // Invalidate cached sizes if layout changes significantly
+    func invalidateLayout() {
+        cachedItemSizes.removeAll()
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {

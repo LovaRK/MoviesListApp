@@ -20,7 +20,7 @@ public class MovieEntity: NSManagedObject {
     func update(with movie: Movie) {
         self.id = Int64(movie.id ?? 0)
         self.adult = movie.adult ?? false
-        self.backdropPath = movie.backdropPath
+        self.backdropPath = movie.backdropPath ?? ""
         self.originalLanguage = movie.originalLanguage?.rawValue
         self.originalTitle = movie.originalTitle
         self.overview = movie.overview
