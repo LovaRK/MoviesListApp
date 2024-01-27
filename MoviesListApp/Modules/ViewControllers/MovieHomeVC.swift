@@ -74,7 +74,7 @@ class MovieHomeVC: UIViewController {
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -5)
         ])
     }
-    
+        
     private func setupCollectionViewManager() {
         collectionViewManager = CollectionViewManager(collectionView: collectionView, viewModel: viewModel, cellType: MovieCollectionViewCell.self)
         collectionView.dataSource = collectionViewManager
@@ -118,7 +118,7 @@ class MovieHomeVC: UIViewController {
     
     private func moviesUpdated() {
         DispatchQueue.main.async {
-            self.collectionView.reloadData()
+            self.collectionViewManager?.updateCollectionViewData(with: self.viewModel.getFilteredMovies())
         }
     }
     

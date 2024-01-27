@@ -13,11 +13,8 @@ class MovieHomeViewModel {
     private var movies: [Movie] = []
     private var filteredMovies: [Movie] = []
     private var coreDataHelper = CoreDataHelper.shared
-    
     private var localDataRepository: LocalDataRepository
     private let apiService: APIService
-
-    
     internal var currentPage = 1
     private var isFetching = false
     private var selectedGenreId: Int?
@@ -140,6 +137,8 @@ extension MovieHomeViewModel: CollectionViewCompatible {
 
 
 extension MovieHomeViewModel: PaginationHandling {
+    
+   
     
     func loadMoreData(completion: @escaping () -> Void) {
         guard !isFetching, let genreId = selectedGenreId, currentPage <= totalPages, !isSearchActive else {

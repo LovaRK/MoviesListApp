@@ -81,7 +81,6 @@ class MoviesListViewModel {
 
 // Conforming to CollectionViewCompatible
 extension MoviesListViewModel: CollectionViewCompatible {
-    
     var numberOfSections: Int { 1 }
     var isFetchingData: Bool { isFetching }
     func numberOfItems(inSection section: Int) -> Int { getFilteredMovies().count }

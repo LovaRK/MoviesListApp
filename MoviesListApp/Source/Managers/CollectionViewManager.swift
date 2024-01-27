@@ -52,12 +52,16 @@ class CollectionViewManager<ViewModel: CollectionViewCompatible & PaginationHand
         collectionView?.delegate = self
         collectionView?.register(cellType, forCellWithReuseIdentifier: viewModel.staticCellIdentifier())
         collectionView?.register(LoadingReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: LoadingReusableView.identifier)
-        // Create an instance of MovieEmptyStateViewModel
-        self.emptyStateViewModel = MovieEmptyStateViewModel()
-        // Set the empty state in your UICollectionView
-        if let emptyStateViewModel = emptyStateViewModel {
-            collectionView?.setEmptyState(withViewModel: emptyStateViewModel)
+    }
+    
+    func updateCollectionViewData(with movies: [Movie]) {
+        if movies.isEmpty {
+            let emptyViewModel = MovieEmptyStateViewModel()
+            collectionView?.setEmptyState(withViewModel: emptyViewModel)
+        } else {
+            collectionView?.restore()
         }
+        collectionView?.reloadData()
     }
     
     // DataSource and Delegate methods implementation
@@ -67,12 +71,7 @@ class CollectionViewManager<ViewModel: CollectionViewCompatible & PaginationHand
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if viewModel.numberOfItems(inSection: section) == 0 {
-            let movieEmptyStateViewModel = MovieEmptyStateViewModel()
-            collectionView.setEmptyState(withViewModel: movieEmptyStateViewModel)
-        } else {
-            collectionView.restore()
-        }
+        
         return viewModel.numberOfItems(inSection: section)
     }
     
@@ -101,7 +100,6 @@ class CollectionViewManager<ViewModel: CollectionViewCompatible & PaginationHand
                 DispatchQueue.main.async {
                     self.collectionView?.reloadData()
                 }
-                
             }
         }
     }

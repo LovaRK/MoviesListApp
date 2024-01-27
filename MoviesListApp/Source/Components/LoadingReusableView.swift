@@ -12,6 +12,8 @@ class LoadingReusableView: UICollectionReusableView {
 
     private let activityIndicator: UIActivityIndicatorView = {
         let indicator = UIActivityIndicatorView()
+        indicator.style = .medium
+        indicator.color = .label
         indicator.translatesAutoresizingMaskIntoConstraints = false
         indicator.startAnimating()
         return indicator
@@ -28,7 +30,6 @@ class LoadingReusableView: UICollectionReusableView {
 
     private func setupViews() {
         addSubview(activityIndicator)
-        self.backgroundColor = .red
         NSLayoutConstraint.activate([
             activityIndicator.centerXAnchor.constraint(equalTo: centerXAnchor),
             activityIndicator.centerYAnchor.constraint(equalTo: centerYAnchor)
