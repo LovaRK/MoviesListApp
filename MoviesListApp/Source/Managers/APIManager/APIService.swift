@@ -10,16 +10,11 @@ import Foundation
 // Define the API service protocol
 protocol APIService {
     func fetchGenres(completion: @escaping (Result<Genres, APIError>) -> Void)
-    func fetchMovies(forGenre genreId: Int, page: Int, completion: @escaping (Result<MovieFetchResult, APIError>) -> Void)
+    func fetchMovies(forGenre genreId: Int, page: Int, completion: @escaping (Result<(movies: [Movie], totalPages: Int), APIError>) -> Void)
     func fetchPopularMovies(page: Int, completion: @escaping (Result<Movies, APIError>) -> Void)
     func fetchTopratedMovies(page: Int, completion: @escaping (Result<Movies, APIError>) -> Void)
     func fetchUpcomingMovies(page: Int, completion: @escaping (Result<Movies, APIError>) -> Void)
     
-}
-
-struct MovieFetchResult {
-    let moviesArray: [Movie]
-    let totalPages: Int
 }
 
 class MoviesAPIService: APIService {
@@ -56,14 +51,13 @@ class MoviesAPIService: APIService {
     
     // Implement other methods similarly...
     
-    func fetchMovies(forGenre genreId: Int, page: Int, completion: @escaping (Result<MovieFetchResult, APIError>) -> Void) {
+    func fetchMovies(forGenre genreId: Int, page: Int, completion: @escaping (Result<(movies: [Movie], totalPages: Int), APIError>) -> Void) {
         if ReachabilityManager.shared.isConnected {
             apiManager.request(route: APIRoute.fetchMovies(genreId: genreId, page: page)) { (result: Result<Movies, APIError>) in
                 switch result {
                 case .success(let moviesResponse):
                     self.saveMoviesToLocal(moviesResponse.movies ?? [])
-                    let result = MovieFetchResult(moviesArray: moviesResponse.movies ?? [], totalPages: moviesResponse.totalPages ?? 0)
-                    completion(.success(result))
+                    completion(.success((movies: moviesResponse.movies ?? [], totalPages: moviesResponse.totalPages ?? 1)))
                 case .failure:
                     completion(.failure(.dataNotFound))
                 }
@@ -72,8 +66,7 @@ class MoviesAPIService: APIService {
             print("Internet is unavailable")
             // This should return [MovieEntity]
             let localMoviesEntities = self.fetchMoviesFromLocal()
-            let result = MovieFetchResult(moviesArray: localMoviesEntities, totalPages: 1)
-            completion(.success(result))
+            completion(.success((movies: localMoviesEntities, totalPages: 1)))
         }
     }
     

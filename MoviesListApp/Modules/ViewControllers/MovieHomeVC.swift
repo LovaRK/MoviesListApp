@@ -36,9 +36,20 @@ class MovieHomeVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupNetworkMonitoring()
         setupUI()
         fetchGenres()
     }
+    
+     func networkStatusChanged(_ isConnected: Bool) {
+            if isConnected {
+                print("Internet is available")
+                // Handle internet availability
+            } else {
+                print("Internet is not available")
+                // Handle no internet scenario
+            }
+        }
     
     private func setupUI() {
         view.backgroundColor = .systemGray5
@@ -146,6 +157,10 @@ class MovieHomeVC: UIViewController {
         }
         return frame
     }
+    
+    deinit {
+            removeNetworkMonitoring()
+        }
 }
 
 // CustomSegmentedControlDelegate

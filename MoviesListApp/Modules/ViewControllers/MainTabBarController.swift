@@ -46,7 +46,7 @@ class MainTabBarController: UITabBarController {
         let moviesAPIService = MoviesAPIService(apiManager: apiManager, localDataRepository: localDataRepository)
         
         // Initializing view models with specific fetch functions
-        let movieHomeVM = MovieHomeViewModel(apiService: moviesAPIService, localDataRepository: localDataRepository)
+        let movieHomeVM = MovieHomeViewModel(apiService: moviesAPIService)
         // Example of how to initialize the ViewModel
         let popularViewModel = MoviesListViewModel(apiService: moviesAPIService, category: .popular)
         let topRatedViewModel = MoviesListViewModel(apiService: moviesAPIService, category: .topRated)

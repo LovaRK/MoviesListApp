@@ -36,6 +36,8 @@ public class MovieEntity: NSManagedObject {
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "yyyy-MM-dd" // Adjust this format to match your date string
             self.releaseDate = dateFormatter.date(from: releaseDateString)
+        } else {
+            self.releaseDate = Date(timeIntervalSince1970: 0) // Example: Jan 1, 1970
         }
         
         // Handle the genres relationship

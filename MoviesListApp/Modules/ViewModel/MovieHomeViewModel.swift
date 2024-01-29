@@ -12,8 +12,6 @@ class MovieHomeViewModel {
     private var genres: [Genre] = []
     private var movies: [Movie] = []
     private var filteredMovies: [Movie] = []
-    private var coreDataHelper = CoreDataHelper.shared
-    private var localDataRepository: LocalDataRepository
     private let apiService: APIService
     internal var currentPage = 1
     private var isFetching = false
@@ -24,9 +22,8 @@ class MovieHomeViewModel {
     
     var isSearchActive: Bool = false
     
-    init(apiService: APIService, localDataRepository: LocalDataRepository) {
+    init(apiService: APIService) {
         self.apiService = apiService
-        self.localDataRepository = localDataRepository
     }
     
     func fetchGenres(completion: @escaping (Genres?, APIError?) -> Void) {
@@ -80,17 +77,17 @@ class MovieHomeViewModel {
         loadMoreData(completion: completion)
     }
     
-    private func handleFetchMoviesResult(_ result: Result<MovieFetchResult, APIError>, completion: @escaping () -> Void) {
+    private func handleFetchMoviesResult(_ result: Result<(movies: [Movie], totalPages: Int), APIError>, completion: @escaping () -> Void) {
         defer { self.isFetching = false }
         switch result {
         case .success(let fetchedMovies):
-            if !fetchedMovies.moviesArray.isEmpty {
-                self.movies.append(contentsOf: fetchedMovies.moviesArray)
+            if !fetchedMovies.movies.isEmpty {
+                self.movies.append(contentsOf: fetchedMovies.movies)
                 self.filteredMovies = self.movies
                 self.currentPage += 1
-                self.totalPages = fetchedMovies.totalPages 
+                self.totalPages = fetchedMovies.totalPages
             } else {
-                print("Error fetching more movies empty movies")
+                print("No more movies fetched.")
             }
         case .failure(let error):
             print("Error fetching more movies: \(error)")
@@ -99,6 +96,7 @@ class MovieHomeViewModel {
             completion()
         }
     }
+
 }
 
 // Extension to handle safe array access
@@ -131,20 +129,19 @@ extension MovieHomeViewModel: CollectionViewCompatible {
 
 extension MovieHomeViewModel: PaginationHandling {
     
-    
-    
     func loadMoreData(completion: @escaping () -> Void) {
         guard !isFetching, let genreId = selectedGenreId, currentPage <= totalPages, !isSearchActive else {
             completion()
             return
         }
         isFetching = true
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5){
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             self.apiService.fetchMovies(forGenre: genreId, page: self.currentPage) { [weak self] result in
                 self?.handleFetchMoviesResult(result, completion: completion)
             }
         }
     }
+
     
     func getTotalPages() -> Int { totalPages }
     

@@ -5,83 +5,84 @@
 //  Created by MA1424 on 27/01/24.
 //
 
-import Foundation
 import Network
+import Foundation
+
+extension Notification.Name {
+    static let networkStatusChanged = Notification.Name("ReachabilityManager.networkStatusChanged")
+}
+
+enum NetworkStatus {
+    case connectedViaWiFi
+    case connectedViaCellular
+    case notConnected
+}
 
 class ReachabilityManager {
-
     static let shared = ReachabilityManager()
     private let monitor: NWPathMonitor
     private let queue = DispatchQueue.global(qos: .background)
-
+    
+    var currentStatus: NetworkStatus = .notConnected
+    
+    private init() {
+        monitor = NWPathMonitor()
+    }
+    
     var isConnected: Bool {
         return monitor.currentPath.status == .satisfied
     }
-
-    var connectionType: NWInterface.InterfaceType? {
-        return monitor.currentPath.availableInterfaces.filter { monitor.currentPath.usesInterfaceType($0.type) }.first?.type
-    }
-
-    var onNetworkStatusChange: ((Bool) -> Void)?
-
-    init() {
-        monitor = NWPathMonitor()
-
+    
+    func startMonitoring() {
         monitor.pathUpdateHandler = { [weak self] path in
-            DispatchQueue.main.async {
-                self?.onNetworkStatusChange?(path.status == .satisfied)
+            guard let self = self else { return }
+            
+            switch path.status {
+            case .satisfied:
+                if path.usesInterfaceType(.wifi) {
+                    self.currentStatus = .connectedViaWiFi
+                } else if path.usesInterfaceType(.cellular) {
+                    self.currentStatus = .connectedViaCellular
+                }
+            case .unsatisfied, .requiresConnection:
+                self.currentStatus = .notConnected
+            @unknown default:
+                break
             }
+            
+            print("Network Status: \(self.currentStatus)")
+            NotificationCenter.default.post(name: .networkStatusChanged, object: self, userInfo: ["Status": self.currentStatus])
         }
-
+        
         monitor.start(queue: queue)
     }
-
-    deinit {
+    
+    func stopMonitoring() {
         monitor.cancel()
     }
 }
 
-//============ HOW TO USE THIS =====================\\
-
-//Subscribing to Network Changes:
-
-/*
-
-ReachabilityManager.shared.onNetworkStatusChange = { isConnected in
-    if isConnected {
-        print("Internet is available")
-        // Perform actions when the internet is available
-    } else {
-        print("Internet is unavailable")
-        // Perform actions when the internet is unavailable
-    }
-}
- 
- */
 
 
-// Checking Current Connectivity and Type:
 
 /*
  
- if ReachabilityManager.shared.isConnected {
-     if let connectionType = ReachabilityManager.shared.connectionType {
-         switch connectionType {
-         case .wifi:
-             print("Connected via WiFi")
-         case .cellular:
-             print("Connected via Cellular")
-         default:
-             print("Other Connection Type")
-         }
-     }
- } else {
-     print("No internet connection")
+ // Usage in another part of the app
+ NotificationCenter.default.addObserver(
+ forName: .networkStatusChanged,
+ object: nil,
+ queue: .main
+ ) { notification in
+ if let status = notification.userInfo?["Status"] as? NetworkStatus {
+ switch status {
+ case .connectedViaWiFi:
+ print("Connected via WiFi")
+ case .connectedViaCellular:
+ print("Connected via Cellular")
+ case .notConnected:
+ print("Not connected to the Internet")
  }
-
+ }
+ }
+ 
  */
-
-
-// =============================================
-
-
