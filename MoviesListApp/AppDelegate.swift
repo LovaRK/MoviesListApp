@@ -16,6 +16,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        ConfigurationManager.shared.setEnvironment(.development)
+        ReachabilityManager.shared.startMonitoring()
         return true
     }
     
@@ -39,6 +41,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func applicationWillTerminate(_ application: UIApplication) {
         appDelegateServices.applicationWillTerminate()
+        ReachabilityManager.shared.stopMonitoring()
     }
 }
 

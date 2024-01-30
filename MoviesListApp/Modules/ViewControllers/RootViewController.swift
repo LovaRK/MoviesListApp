@@ -22,9 +22,27 @@ class RootViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .white
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+        self.setupAPIKeysToKeychain()
+        
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
             self.chooseInitialViewController()
+    }
+    
+    private func setupAPIKeysToKeychain() {
+        // Example usage to store the API Key
+        let apiKey = "4fafde19e120ff8f6ef8e1106f0e614c"
+        if let apiKeyData = apiKey.data(using: .utf8) {
+            KeychainService.save(key: "APIKey", data: apiKeyData)
         }
+        
+        let accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI0ZmFmZGUxOWUxMjBmZjhmNmVmOGUxMTA2ZjBlNjE0YyIsInN1YiI6IjVjNmJmM2I4YzNhMzY4NWNiZGRjOTBlZSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.VselLryELvHnWq3Mph2hbJpnTbBc8Py0UmjtOiZpt0M"
+        if let accessTokenData = accessToken.data(using: .utf8) {
+            KeychainService.save(key: "AccessToken", data: accessTokenData)
+        }
+        
     }
     
     private func chooseInitialViewController() {

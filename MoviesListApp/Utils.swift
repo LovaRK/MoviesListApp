@@ -11,7 +11,8 @@ import Foundation
 class Utils {
     
     static func getEnvironmentValue(forKey key: String) -> String? {
-        if let path = Bundle.main.path(forResource: "Prod_Info", ofType: "plist"),
+        let resourceName = ConfigurationManager.shared.getEnvironment().rawValue + "_Config" // Assuming plist names like Dev_Config.plist
+        if let path = Bundle.main.path(forResource: resourceName, ofType: "plist"),
            let keys = NSDictionary(contentsOfFile: path) as? [String: Any],
            let value = keys[key] as? String {
             return value

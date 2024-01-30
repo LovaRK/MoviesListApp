@@ -13,14 +13,13 @@ protocol APIManagerProtocal {
 
 class APIManager: APIManagerProtocal {
     // Define default headers here
+    
     private var defaultHeaders: [String: String] {
-        if let accessToken = Utils.getEnvironmentValue(forKey: "AccessToken") {
-            return [
-                "Accept": "application/json",
-                "Authorization": "Bearer \(accessToken)"
-            ]
+        var headers = ["Accept": "application/json"]
+        if let accessToken = KeychainService.load(key: "APIKey") {
+            headers["Authorization"] = "Bearer \(accessToken)"
         }
-        return ["Accept": "application/json"]
+        return headers
     }
     
     func request<T: Decodable>(route: URLRoute, completion: @escaping (Result<T, APIError>) -> Void) {
@@ -66,8 +65,8 @@ class APIManager: APIManagerProtocal {
                 return
             }
             do {
-//                let responseDataString = String(data: data, encoding: .utf8)
-//                print("Response JSON string: \(String(describing: responseDataString))")
+                //                let responseDataString = String(data: data, encoding: .utf8)
+                //                print("Response JSON string: \(String(describing: responseDataString))")
                 let decodedData = try JSONDecoder().decode(T.self, from: data)
                 DispatchQueue.main.async {
                     completion(.success(decodedData))

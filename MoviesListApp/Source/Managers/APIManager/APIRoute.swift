@@ -24,7 +24,8 @@ enum APIRoute: URLRoute {
     case fetchUpcomingMovies(page: Int)
     
     var baseURL: URL {
-        return URL(string: "https://api.themoviedb.org/3")!
+        print("\(String(describing: ConfigurationManager.shared.getBaseURL()))")
+        return ConfigurationManager.shared.getBaseURL() 
     }
     
     var path: String {
@@ -53,7 +54,7 @@ enum APIRoute: URLRoute {
             var params: [String: Any] = [:]
             
             // Get the API key
-            if let apiKey = Utils.getEnvironmentValue(forKey: "APIKey") {
+            if let apiKey = KeychainService.load(key: "APIKey") {
                 params["api_key"] = apiKey
             }
             params["language"] = "en-US"
@@ -64,7 +65,7 @@ enum APIRoute: URLRoute {
             var params: [String: Any] = [:]
             
             // Get the API key
-            if let apiKey = Utils.getEnvironmentValue(forKey: "APIKey") {
+            if let apiKey = KeychainService.load(key: "APIKey") {
                 params["api_key"] = apiKey
             }
             
@@ -80,6 +81,10 @@ enum APIRoute: URLRoute {
         case .fetchPopularMovies(let page), .fetchTopRatedMovies(let page), .fetchUpcomingMovies(let page):
             var params: [String: Any] = [:]
             params["page"] = "\(page)"
+            // Get the API key
+            if let apiKey = KeychainService.load(key: "APIKey") {
+                params["api_key"] = apiKey
+            }
             return params
         }
     }

@@ -14,7 +14,7 @@ class ImageLoader {
     private static var runningRequests = [UUID: URLSessionDataTask]()
 
     static func loadImage(from urlString: String, completion: @escaping (Result<UIImage, Error>) -> Void) -> UUID? {
-        guard let urlPath = Utils.getEnvironmentValue(forKey: "posterPath") else {
+        guard let urlPath = Utils.getEnvironmentValue(forKey: "posterPathUrl") else {
             completion(.failure(ImageLoaderError.missingPosterPath))
             return nil
         }
